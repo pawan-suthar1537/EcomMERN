@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import AuthLayout from "./components/auth/layout";
 import AuthLogin from "./pages/auth/Login";
@@ -14,55 +14,78 @@ import ShoppingAccount from "./pages/shopping-view/account";
 import ShoppingCheckout from "./pages/shopping-view/checkout";
 import ShoppingListing from "./pages/shopping-view/productlisting";
 import ShoppingHome from "./pages/shopping-view/home";
-import CheckAuth from "./components/common/checkauth";
+
 import Unauthpage from "./pages/unauthpage/unauthpage";
+import { useSelector } from "react-redux";
 
 function App() {
-  const isauth = false;
-  const user = null;
+  const { isauth, user } = useSelector((state) => state.auth);
+
+  const redirectTo = (path) => {
+    if (isauth && user) {
+      return user.role === "admin" ? "/admin/dashboard" : "/shop/home";
+    }
+    return path;
+  };
 
   return (
     <>
       <div className="flex flex-col overflow-hidden bg-white">
         <Routes>
-          <Route
-            path="/auth"
-            element={
-              <CheckAuth isauth={isauth} user={user}>
-                <AuthLayout />
-              </CheckAuth>
-            }
-          >
-            <Route path="login" element={<AuthLogin />} />
-            <Route path="register" element={<AuthRegister />} />
+          {/* Public Routes */}
+          <Route path="/" element={<ShoppingLayout />}>
+            <Route index element={<ShoppingHome />} />
+            <Route path="shop/home" element={<ShoppingHome />} />
+            <Route path="shop/products" element={<ShoppingListing />} />
+            <Route path="shop/checkout" element={<ShoppingCheckout />} />
+            <Route
+              path="shop/account"
+              element={
+                isauth ? <ShoppingAccount /> : <Navigate to="/auth/login" />
+              }
+            />
           </Route>
+
+          <Route path="/auth" element={<AuthLayout />}>
+            <Route
+              path="login"
+              element={
+                isauth ? (
+                  <Navigate to={redirectTo("/auth/login")} />
+                ) : (
+                  <AuthLogin />
+                )
+              }
+            />
+            <Route
+              path="register"
+              element={
+                isauth ? (
+                  <Navigate to={redirectTo("/auth/register")} />
+                ) : (
+                  <AuthRegister />
+                )
+              }
+            />
+          </Route>
+
           <Route
             path="/admin"
             element={
-              <CheckAuth isauth={isauth} user={user}>
+              isauth && user?.role === "admin" ? (
                 <AdminLayout />
-              </CheckAuth>
+              ) : (
+                <Navigate to="/unauth-page" />
+              )
             }
           >
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
             <Route path="orders" element={<AdminOrders />} />
           </Route>
-          <Route
-            path="/shop"
-            element={
-              <CheckAuth isauth={isauth} user={user}>
-                <ShoppingLayout />
-              </CheckAuth>
-            }
-          >
-            <Route path="home" element={<ShoppingHome />} />
-            <Route path="product-listing" element={<ShoppingListing />} />
-            <Route path="checkout" element={<ShoppingCheckout />} />
-            <Route path="account" element={<ShoppingAccount />} />
-          </Route>
+
+          <Route path="unauth-page" element={<Unauthpage />} />
           <Route path="*" element={<NotFound />} />
-          <Route path="/unauth-page" element={<Unauthpage />} />
         </Routes>
       </div>
     </>

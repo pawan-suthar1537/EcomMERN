@@ -1,7 +1,11 @@
 import CommonForm from "@/components/common/form";
-import { loginformcontrols } from "@/config";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { API_URL, loginformcontrols } from "@/config";
+import { setToken, setUser } from "@/store/authslice";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const initialstate = {
   email: "",
@@ -9,12 +13,66 @@ const initialstate = {
 };
 
 const AuthLogin = () => {
+  const { isauth, user } = useSelector((state) => state.auth);
   const [formdata, setformdata] = useState(initialstate);
+  const location = useLocation();
 
-  const onsubmit = (event) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const onsubmit = async (event) => {
     event.preventDefault();
-    console.log(formdata);
+    console.log("formdata", formdata);
+
+    try {
+      const res = await axios.post(`${API_URL}/api/auth/login`, formdata, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      console.log("res while login", res.data);
+
+      if (res.data.success === false) {
+        toast.error("Error logging in user");
+        throw new Error(res.data.message);
+      }
+
+      toast.success(res.data.message || "User logged in successfully");
+      console.log("res.data.user", res.data.user);
+      dispatch(setUser(res.data.user));
+      dispatch(setToken(res.data.token));
+      if (res.data.user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/shop/home");
+      }
+    } catch (error) {
+      console.log("error", error);
+      toast.error("Error logging in user");
+    }
   };
+
+  useEffect(() => {
+    if (isauth && user) {
+      if (user.role === "admin") {
+        if (
+          location.pathname === "/auth/login" ||
+          location.pathname === "/auth/register"
+        ) {
+          navigate("/admin/dashboard");
+        }
+      } else if (user.role === "user") {
+        if (
+          location.pathname === "/auth/login" ||
+          location.pathname === "/auth/register"
+        ) {
+          navigate("/shop/home");
+        }
+      }
+    }
+  }, [isauth, user, navigate, location.pathname]);
+
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
       <div className="text-center">

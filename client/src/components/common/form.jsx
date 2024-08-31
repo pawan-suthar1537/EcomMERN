@@ -17,7 +17,6 @@ function CommonForm({
   buttontext,
 }) {
   function renderinputsbycomponenttype(getitem) {
-    console.log(getitem);
     let element = null;
     const value = formdata[getitem.name] || "";
     switch (getitem.componenttype) {

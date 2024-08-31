@@ -1,7 +1,11 @@
 import CommonForm from "@/components/common/form";
-import { registerformcontrols } from "@/config";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { API_URL, registerformcontrols } from "@/config";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const initialstate = {
   username: "",
@@ -11,11 +15,52 @@ const initialstate = {
 
 const AuthRegister = () => {
   const [formdata, setformdata] = useState(initialstate);
+  const { isauth, user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  console.log("register formdata", formdata);
+  const location = useLocation();
 
-  const onsubmit = (event) => {
+  const onsubmit = async (event) => {
     event.preventDefault();
-    console.log(formdata);
+    try {
+      const res = await axios.post(`${API_URL}/api/auth/register`, formdata, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      console.log("res while register", res.data);
+      if (res.data.success === false) {
+        toast.error(res.data.message || "Error registering user");
+        throw new Error(res.data.message);
+      }
+      toast.success(res.data.message || "User registered successfully");
+
+      navigate("/auth/login");
+    } catch (error) {
+      toast.error(error.message || "Error registering user");
+    }
   };
+
+  useEffect(() => {
+    if (isauth && user) {
+      if (user.role === "admin") {
+        if (
+          location.pathname === "/auth/login" ||
+          location.pathname === "/auth/register"
+        ) {
+          navigate("/admin/dashboard");
+        }
+      } else if (user.role === "user") {
+        if (
+          location.pathname === "/auth/login" ||
+          location.pathname === "/auth/register"
+        ) {
+          navigate("/shop/home");
+        }
+      }
+    }
+  }, [isauth, user, navigate, location.pathname]);
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6">

@@ -1,47 +1,58 @@
-import PropTypes from 'prop-types';
-import { Navigate, useLocation } from "react-router-dom";
+// import { Navigate, useLocation } from "react-router-dom";
+// import PropTypes from "prop-types";
 
-function CheckAuth({ isauth, user, children }) {
-  const location = useLocation();
+// function CheckAuth({ isauth, user, children }) {
+//   console.log("CheckAuth component rendered", { isauth, user });
+//   const location = useLocation();
 
-  if (
-    !isauth &&
-    !(
-      location.pathname.includes("/login") ||
-      location.pathname.includes("/register")
-    )
-  ) {
-    return <Navigate to="/auth/login" />;
-  }
+//   console.log("isauth", isauth);
+//   console.log("user", user);
 
-  if (
-    isauth &&
-    (location.pathname.includes("/login") ||
-      location.pathname.includes("/register"))
-  ) {
-    if (user?.role === "admin") {
-      return <Navigate to="/admin/dashboard" />;
-    }
-    return <Navigate to="/shop/home" />;
-  }
+//   // Redirect unauthenticated users to login
+//   if (!isauth || !user) {
+//     return <Navigate to="/auth/login" state={{ from: location }} />;
+//   }
 
-  if (isauth && user?.role !== "admin" && location.pathname.includes("admin")) {
-    return <Navigate to="/unauth-page" />;
-  }
+//   // Redirect authenticated users away from login/register pages
+//   if (
+//     (location.pathname.includes("/auth/login") ||
+//       location.pathname.includes("/auth/register")) &&
+//     isauth
+//   ) {
+//     return user.role === "admin" ? (
+//       <Navigate to="/admin/dashboard" />
+//     ) : (
+//       <Navigate to="/shop/home" />
+//     );
+//   }
 
-  if (isauth && user?.role === "admin" && location.pathname.includes("shop")) {
-    return <Navigate to="/admin/dashboard" />;
-  }
+//   // Restrict admin routes to admin users only
+//   if (
+//     isauth &&
+//     user.role !== "admin" &&
+//     location.pathname.startsWith("/admin")
+//   ) {
+//     return <Navigate to="/unauth-page" />;
+//   }
 
-  return <>{children}</>;
-}
+//   // Restrict shopping routes to non-admin users
+//   if (
+//     isauth &&
+//     user.role === "admin" &&
+//     location.pathname.startsWith("/shop")
+//   ) {
+//     return <Navigate to="/admin/dashboard" />;
+//   }
 
-CheckAuth.propTypes = {
-  isauth: PropTypes.bool.isRequired,
-  user: PropTypes.shape({
-    role: PropTypes.string
-  }),
-  children: PropTypes.node.isRequired
-};
+//   return <>{children}</>;
+// }
 
-export default CheckAuth;
+// CheckAuth.propTypes = {
+//   isauth: PropTypes.bool,
+//   user: PropTypes.shape({
+//     role: PropTypes.string,
+//   }),
+//   children: PropTypes.node,
+// };
+
+// export default CheckAuth;
