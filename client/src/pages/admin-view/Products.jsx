@@ -8,6 +8,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { addnewprodutformcontrols } from "@/config";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Fragment, useState } from "react";
 
 const initialformdata = {
@@ -26,6 +27,7 @@ function AdminProducts() {
   const [formdata, setformdata] = useState(initialformdata);
   const [imagefile, setimagefile] = useState(null);
   const [imageurl, setimageurl] = useState("");
+  const [imgloading, setimageloading] = useState(false);
 
   const onsubmit = (event) => {
     event.preventDefault();
@@ -34,9 +36,17 @@ function AdminProducts() {
 
   return (
     <Fragment>
-      <div className="mb-5 w-full flex justify-end">
+      <div className="mb-5 w-full flex justify-end ">
         <Button onClick={() => setopencreateproductsheet(true)}>
           Add New Product
+          <span>
+            <DotLottieReact
+              src="https://lottie.host/94dbde9b-caf7-4112-b5d2-fdd816cdfbc1/ysCTK5nqUY.json"
+              autoplay
+              loop
+              className="w-10 h-10 justify-start -mt-[20px]"
+            />
+          </span>
         </Button>
       </div>
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -55,6 +65,7 @@ function AdminProducts() {
               setfile={setimagefile}
               imageurl={imageurl}
               setimageurl={setimageurl}
+              setimageloading={setimageloading}
             />
             {/* img component */}
             <div className="py-6">

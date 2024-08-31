@@ -14,6 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Adminsidebar = [
   {
@@ -78,8 +79,16 @@ function AdminSidebar({ Open, setOpen }) {
       <aside className="hidden w-64 bg-background border-r  p-6 lg:flex  flex-col">
         <div
           onClick={() => navigate("/admin/dashboard")}
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center gap-2 cursor-pointer flex"
         >
+          <span>
+            <DotLottieReact
+              className="w-12 h-11"
+              src="https://lottie.host/8ea3d7bb-3e31-4daa-8aed-9fd24f66c50b/Wu1rP4eu7g.json"
+              loop
+              autoplay
+            />
+          </span>
           <h1 className="text-xl font-extrabold">Admin Panel</h1>
         </div>
         <Menuitems setOpen={setOpen} />

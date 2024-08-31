@@ -1,10 +1,19 @@
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "../ui/button";
+import axios from "axios";
+import { API_URL } from "@/config";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
-function ImageUpload({ file, setfile, imageurl, setimageurl }) {
+function ImageUpload({
+  file,
+  setfile,
+  imageurl,
+  setimageurl,
+  setimageloading,
+}) {
   const inputref = useRef(null);
 
   const handleimagechange = (event) => {
@@ -30,6 +39,22 @@ function ImageUpload({ file, setfile, imageurl, setimageurl }) {
     }
   };
 
+  async function uploadimagetocloudinary() {
+    setimageloading(true);
+    const data = new FormData();
+    data.append("image", file);
+    const res = axios.post(`${API_URL}/api/admin/products/upload-image`, data);
+    console.log("cloudinary upload image res", res);
+    if (res?.data?.success) {
+      setimageurl(res.data.result.secure_url);
+      setimageloading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (file !== null) uploadimagetocloudinary();
+  }, [file]);
+
   return (
     <div className="w-full max-w-md mx-auto  mt-4">
       <Label className="text-lg font-semibold mb-2  block">Image Upload</Label>
@@ -48,10 +73,18 @@ function ImageUpload({ file, setfile, imageurl, setimageurl }) {
         {!file ? (
           <Label
             htmlFor="image"
-            className="flex flex-col items-center justify-center h-32 cursor-pointer"
+            className="flex flex-col items-center justify-center h-32 "
           >
-            <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" />
-            <span>Drag & drop or click to upload image</span>
+            {/* <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" /> */}
+            <DotLottieReact
+              src="https://lottie.host/60a5ed8d-dc7c-464d-b8bf-81793529ffcd/KmI8RoZdmt.json"
+              background="#FFFFFF"
+              className=" w-full h-full text-muted-foreground mb-10 cursor-pointer"
+              loop
+              autoplay
+            />
+
+            {/* <span>Drag & drop or click to upload image</span> */}
           </Label>
         ) : (
           <div className="flex items-center justify-between">
