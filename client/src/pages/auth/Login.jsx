@@ -13,9 +13,7 @@ const initialstate = {
 };
 
 const AuthLogin = () => {
-  const { isauth, user } = useSelector((state) => state.auth);
   const [formdata, setformdata] = useState(initialstate);
-  const location = useLocation();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,7 +36,12 @@ const AuthLogin = () => {
         throw new Error(res.data.message);
       }
 
-      toast.success(res.data.message || "User logged in successfully");
+      toast.success(
+        res.data.message ||
+          `${
+            res.data.user.role === "admin" ? "Admin" : "User"
+          } logged in successfully`
+      );
       console.log("res.data.user", res.data.user);
       dispatch(setUser(res.data.user));
       dispatch(setToken(res.data.token));
@@ -53,25 +56,25 @@ const AuthLogin = () => {
     }
   };
 
-  useEffect(() => {
-    if (isauth && user) {
-      if (user.role === "admin") {
-        if (
-          location.pathname === "/auth/login" ||
-          location.pathname === "/auth/register"
-        ) {
-          navigate("/admin/dashboard");
-        }
-      } else if (user.role === "user") {
-        if (
-          location.pathname === "/auth/login" ||
-          location.pathname === "/auth/register"
-        ) {
-          navigate("/shop/home");
-        }
-      }
-    }
-  }, [isauth, user, navigate, location.pathname]);
+  // useEffect(() => {
+  //   if (isauth && user) {
+  //     if (user.role === "admin") {
+  //       if (
+  //         location.pathname === "/auth/login" ||
+  //         location.pathname === "/auth/register"
+  //       ) {
+  //         navigate("/admin/dashboard");
+  //       }
+  //     } else if (user.role === "user") {
+  //       if (
+  //         location.pathname === "/auth/login" ||
+  //         location.pathname === "/auth/register"
+  //       ) {
+  //         navigate("/shop/home");
+  //       }
+  //     }
+  //   }
+  // }, [isauth, user, navigate, location.pathname]);
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6">

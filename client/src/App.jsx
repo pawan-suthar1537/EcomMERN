@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
 import AuthLayout from "./components/auth/layout";
 import AuthLogin from "./pages/auth/Login";
@@ -17,9 +17,17 @@ import ShoppingHome from "./pages/shopping-view/home";
 
 import Unauthpage from "./pages/unauthpage/unauthpage";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 function App() {
+  const navigate = useNavigate();
   const { isauth, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isauth === false || user === null) {
+      navigate("/auth/login");
+    }
+  }, []);
 
   const redirectTo = (path) => {
     if (isauth && user) {
