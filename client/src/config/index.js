@@ -106,5 +106,33 @@ export const addnewprodutformcontrols = [
   },
 ];
 
+export const menuitems = [
+  {
+    id: "home",
+    label: "Home",
+    path: "/shop/home",
+  },
+  {
+    id: "men",
+    label: "Menu",
+    path: "/shop/products",
+  },
+  {
+    id: "women",
+    label: "Women",
+    path: "/shop/products",
+  },
+  {
+    id: "electronics",
+    label: "Electronics",
+    path: "/shop/products",
+  },
+  {
+    id: "kids",
+    label: "Kids",
+    path: "/shop/products",
+  },
+];
+
 export const API_URL =
   import.meta.env.VITE_APP_BACKEND_URL || "http://localhost:3000";
