@@ -10,7 +10,7 @@ function AdminHeader({ setOpen }) {
         <span className="sr-only">Toggle menu</span>
       </Button>
       <div className="flex flex-1 justify-end">
-        <Button className="inline-flex gap-2 items-center rounded-md px-4 py-2 text-sm font-medium shadow">
+        <Button className="inline-flex gap-1 items-center rounded-md  py-2 text-sm font-medium shadow">
           <span>
             <DotLottieReact
               src="https://lottie.host/56fa634d-3d38-42a3-9cd8-aaace663f633/sFmYBWSxbn.json"

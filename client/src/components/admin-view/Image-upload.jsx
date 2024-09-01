@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import axios from "axios";
 import { API_URL } from "@/config";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { Skeleton } from "../ui/skeleton";
 
 function ImageUpload({
   file,
@@ -13,6 +14,8 @@ function ImageUpload({
   imageurl,
   setimageurl,
   setimageloading,
+  imgloading,
+  iseditmode,
 }) {
   const inputref = useRef(null);
 
@@ -43,7 +46,10 @@ function ImageUpload({
     setimageloading(true);
     const data = new FormData();
     data.append("image", file);
-    const res = axios.post(`${API_URL}/api/admin/products/upload-image`, data);
+    const res = await axios.post(
+      `${API_URL}/api/admin/products/upload-image`,
+      data
+    );
     console.log("cloudinary upload image res", res);
     if (res?.data?.success) {
       setimageurl(res.data.result.secure_url);
@@ -59,7 +65,9 @@ function ImageUpload({
     <div className="w-full max-w-md mx-auto  mt-4">
       <Label className="text-lg font-semibold mb-2  block">Image Upload</Label>
       <div
-        className="border-2 border-dashed p-4 rounded-lg  "
+        className={`${
+          iseditmode ? "opacity-60" : ""
+        } border-2 border-dashed p-4 rounded-lg  `}
         onDragOver={handledragover}
         onDrop={handledrop}
       >
@@ -69,11 +77,14 @@ function ImageUpload({
           className="hidden"
           ref={inputref}
           onChange={handleimagechange}
+          disabled={iseditmode}
         />
         {!file ? (
           <Label
             htmlFor="image"
-            className="flex flex-col items-center justify-center h-32 "
+            className={`flex flex-col items-center justify-center h-32 ${
+              iseditmode ? "cursor-not-allowed" : ""
+            } `}
           >
             {/* <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" /> */}
             <DotLottieReact
