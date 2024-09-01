@@ -27,7 +27,7 @@ const Usegetalladminaddedproducts = () => {
       }
     };
     fetchallproducts();
-  }, [dispatch]);
+  }, []);
 };
 
 export default Usegetalladminaddedproducts;

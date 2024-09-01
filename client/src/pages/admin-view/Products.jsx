@@ -13,6 +13,7 @@ import Usegetalladminaddedproducts from "@/hooks/Usegetalladminaddedproducts";
 import { setproducts } from "@/store/admin-product-slice";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import axios from "axios";
+import { array } from "prop-types";
 import { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +40,7 @@ function AdminProducts() {
   const [imgloading, setimageloading] = useState(false);
   const [currenteditpostid, setcurrenteditpostid] = useState(null);
 
-  // console.log("imageurl in adminproduct to pass in api ", imageurl);
+  console.log("imageurl in adminproduct to pass in api ", imageurl);
 
   const { products } = useSelector((state) => state.adminproducts);
   console.log("all products in admin state", products);
@@ -47,34 +48,107 @@ function AdminProducts() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  console.log("formdata for  product", formdata);
+
+  function isFormvalid() {
+    return Object.keys(formdata)
+      .map((key) => formdata[key] !== "")
+      .every((item) => item);
+  }
+
+  async function handledeleteproduct(productid) {
+    console.log("productid to delete", productid);
+    try {
+      const res = await axios.delete(
+        `${API_URL}/api/admin/products/delete-product/${productid}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log("delete product res", res.data);
+      if (res.data.success === true) {
+        toast.success("Product deleted successfully");
+        dispatch(
+          setproducts(products.filter((product) => product._id !== productid))
+        );
+        navigate("/admin/products");
+      } else {
+        toast.error(res.data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  }
+
   const onsubmit = async (event) => {
     event.preventDefault();
-    console.log("formdata for add prudct", formdata);
 
-    const res = await axios.post(
-      `${API_URL}/api/admin/products/add-product`,
-      {
-        ...formdata,
-        image: imageurl,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
+    try {
+      let res;
+      console.log("currenteditpostid", currenteditpostid);
+      if (currenteditpostid === null) {
+        // Add new product
+        res = await axios.post(
+          `${API_URL}/api/admin/products/add-product`,
+          {
+            ...formdata,
+            image: imageurl,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+      } else {
+        // Edit existing product
+        res = await axios.put(
+          `${API_URL}/api/admin/products/edit-product/${currenteditpostid}`,
+          {
+            ...formdata,
+            image: imageurl,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
       }
-    );
-    console.log("add new product api call response: ", res.data);
-    if (res.data.success) {
-      toast.success(res.data.message || "Product added successfully");
-      setopencreateproductsheet(false);
-      dispatch(setproducts([...products, res.data.data]));
-      navigate("/admin/products");
 
-      setimagefile(null);
-      setformdata(initialformdata);
-    } else {
-      toast.error(res.data.message || "Failed to add product");
+      console.log("API call response: ", res.data);
+      if (res.data.success) {
+        toast.success(res.data.message || "Product saved successfully");
+        setopencreateproductsheet(false);
+
+        if (currenteditpostid === null) {
+          // If a new product was added
+          dispatch(setproducts([...products, res.data.data]));
+        } else {
+          // If an existing product was edited
+          const updatedProducts = products.map((product) =>
+            product._id === currenteditpostid ? res.data.data : product
+          );
+          dispatch(setproducts(updatedProducts));
+        }
+
+        setcurrenteditpostid(null);
+        setimagefile(null);
+        setformdata(initialformdata);
+        navigate("/admin/products");
+      } else {
+        toast.error(res.data.message || "Failed to save product");
+      }
+    } catch (error) {
+      console.error("Error saving product:", error);
+      toast.error("An error occurred while saving the product");
     }
   };
 
@@ -93,20 +167,31 @@ function AdminProducts() {
           </span>
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {Array.isArray(products) &&
-          products
-            .reverse()
-            .map((product, index) => (
+
+      {Array.isArray(products) && products.length === 0 ? (
+        <DotLottieReact
+          src="https://lottie.host/c2759bfd-f77e-46c2-93ea-db7ccb7ae98c/mL9ZC7kdIS.json"
+          loop
+          autoplay
+          background="transparent"
+          className="w-[100%] h-[70%] justify-center items-center"
+        />
+      ) : (
+        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+          {Array.isArray(products) &&
+            products.map((product, index) => (
               <AdminProductsTile
                 key={index}
                 product={product}
+                handledeleteproduct={handledeleteproduct}
                 setformdata={setformdata}
                 setcurrenteditpostid={setcurrenteditpostid}
                 setopencreateproductsheet={setopencreateproductsheet}
               />
             ))}
-      </div>
+        </div>
+      )}
+
       <Sheet
         open={opencreateproductsheet}
         onOpenChange={() => {
@@ -141,6 +226,7 @@ function AdminProducts() {
                 currenteditpostid !== null ? "Edit Product" : "Add Product"
               }
               onsubmit={onsubmit}
+              isbtndisbaled={!isFormvalid()}
             />
           </div>
         </SheetContent>

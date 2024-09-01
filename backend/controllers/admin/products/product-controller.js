@@ -89,8 +89,6 @@ const fetchProducts = async (req, res) => {
 
 const editProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-
     const {
       title,
       price,
@@ -101,7 +99,8 @@ const editProduct = async (req, res) => {
       brand,
       totalstock,
     } = req.body;
-    const product = await Product.findOne({ id });
+    const product = await Product.findOne({ _id: req.params.id });
+    console.log(product);
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -132,18 +131,17 @@ const editProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    const product = await Product.findOne({ id });
+    const product = await Product.findByIdAndDelete({ _id: req.params.id });
     if (!product) {
       return res.status(404).json({
         success: false,
         message: "Product does not exist for delete",
       });
     }
-    await product.remove();
     res.status(200).json({
       success: true,
       message: "Product deleted successfully",
+      data: product,
     });
   } catch (error) {
     console.error(error);

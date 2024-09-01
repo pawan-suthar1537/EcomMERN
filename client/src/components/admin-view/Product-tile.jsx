@@ -6,6 +6,7 @@ function AdminProductsTile({
   setformdata,
   setcurrenteditpostid,
   setopencreateproductsheet,
+  handledeleteproduct,
 }) {
   return (
     <div>
@@ -45,7 +46,7 @@ function AdminProductsTile({
             >
               <span className="mr-2">Edit</span>
             </Button>
-            <Button>
+            <Button onClick={() => handledeleteproduct(product?._id)}>
               <span className="mr-2">Delete</span>
             </Button>
           </CardFooter>
