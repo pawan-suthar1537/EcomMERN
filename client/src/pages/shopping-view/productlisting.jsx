@@ -1,4 +1,5 @@
 import ProductFilter from "@/components/shopping-view/filter";
+import ProductDetailsbyidDialog from "@/components/shopping-view/product-detailsbyid";
 import ShoppingProducttile from "@/components/shopping-view/Product-tile";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,12 +9,14 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { productsortoptions } from "@/config";
+import { API_URL, productsortoptions } from "@/config";
 import UsegetallShopProducts from "@/hooks/Usegetallshopproducts";
+import { setshopproductdetails } from "@/store/shop-slice";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import axios from "axios";
 import { ArrowDown } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 
 function createserchparamhelper(filterparams) {
@@ -30,10 +33,14 @@ function createserchparamhelper(filterparams) {
 
 function ShoppingListing() {
   // fetch all products added by admin for sell
-  const { shopproductlist } = useSelector((state) => state.shop);
+  const { shopproductlist, shopproductdetails } = useSelector(
+    (state) => state.shop
+  );
   const [filter, setfilter] = useState({});
   const [sort, setsort] = useState(null);
   const [searchParams, setsearchParams] = useSearchParams();
+  const [opendetailsdialog, setopendetailsdialog] = useState(false);
+  const dispatch = useDispatch();
   UsegetallShopProducts({ filterparams: filter, sortparams: sort });
 
   useEffect(() => {
@@ -42,6 +49,12 @@ function ShoppingListing() {
       setsearchParams(new URLSearchParams(createQstring));
     }
   }, [filter, sort]);
+
+  useEffect(() => {
+    if (shopproductdetails !== null && opendetailsdialog) {
+      setopendetailsdialog(true);
+    }
+  }, [shopproductdetails]);
 
   useEffect(() => {
     setsort("price-low-high");
@@ -76,6 +89,24 @@ function ShoppingListing() {
     console.log(copyfilter);
     setfilter(copyfilter);
     sessionStorage.setItem("filter", JSON.stringify(copyfilter));
+  }
+
+  async function handlegetproductdetailsbyid(getpid) {
+    console.log("getpid for serch product details", getpid);
+    try {
+      const res = await axios.get(`${API_URL}/api/shop/get/${getpid}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        dispatch(setshopproductdetails(res.data.data));
+        setopendetailsdialog(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -117,7 +148,11 @@ function ShoppingListing() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  md:grid-cols-3 gap-4">
           {shopproductlist && shopproductlist.length > 0 ? (
             shopproductlist.map((item) => (
-              <ShoppingProducttile key={item} product={item} />
+              <ShoppingProducttile
+                handlegetproductdetailsbyid={handlegetproductdetailsbyid}
+                key={item}
+                product={item}
+              />
             ))
           ) : (
             <div>
@@ -131,6 +166,11 @@ function ShoppingListing() {
           )}
         </div>
       </div>
+      <ProductDetailsbyidDialog
+        open={opendetailsdialog}
+        setopenchange={setopendetailsdialog}
+        productdetails={shopproductdetails}
+      />
     </div>
   );
 }

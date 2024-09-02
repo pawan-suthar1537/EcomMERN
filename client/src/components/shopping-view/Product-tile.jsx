@@ -2,10 +2,13 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 
-function ShoppingProducttile({ product }) {
+function ShoppingProducttile({ product, handlegetproductdetailsbyid }) {
   return (
     <Card className="w-full  max-w-sm mx-auto">
-      <div>
+      <div
+        onClick={() => handlegetproductdetailsbyid(product._id)}
+        className="cursor-pointer"
+      >
         <div className="relative">
           <img
             src={product?.image}
@@ -44,7 +47,9 @@ function ShoppingProducttile({ product }) {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="">Add to Cart</Button>
+          <Button onClick={(e) => e.stopPropagation()} className="">
+            Add to Cart
+          </Button>
         </CardFooter>
       </div>
     </Card>

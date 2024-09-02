@@ -54,6 +54,31 @@ const getfilterproducts = async (req, res) => {
   }
 };
 
+const getproductdetails = async (req, res) => {
+  try {
+    const pro = await Product.findById({ _id: req.params.id });
+    if (pro) {
+      res.status(200).json({
+        success: true,
+        message: "Product details fetched successfully",
+        data: pro,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Product not found for serch details",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
 module.exports = {
   getfilterproducts,
+  getproductdetails,
 };
