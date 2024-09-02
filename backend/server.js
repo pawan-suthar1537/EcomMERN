@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 //! importing routes
 const authRoutes = require("./routes/auth/auth-routes");
 const adminproductsRoutes = require("./routes/admin/products/products-routes");
+const shopRoutes = require("./routes/shop/shop-router");
 
 //! middlewares
 app.use(
@@ -37,6 +38,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin/products", adminproductsRoutes);
+app.use("/api/shop", shopRoutes);
 
 connect()
   .then(() => {
