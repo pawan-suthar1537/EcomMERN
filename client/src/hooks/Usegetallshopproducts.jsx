@@ -5,12 +5,16 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-const UsegetallShopProducts = () => {
+const UsegetallShopProducts = ({ filterparams, sortparams }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchallshopproducts = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/shop/get`, {
+        const query = new URLSearchParams({
+          ...filterparams,
+          sortby: sortparams,
+        });
+        const res = await axios.get(`${API_URL}/api/shop/get?${query}`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -25,7 +29,7 @@ const UsegetallShopProducts = () => {
       }
     };
     fetchallshopproducts();
-  }, []);
+  }, [filterparams, sortparams]);
 };
 
 export default UsegetallShopProducts;

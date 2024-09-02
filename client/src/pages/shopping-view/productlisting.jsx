@@ -9,19 +9,39 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { productsortoptions } from "@/config";
-
 import UsegetallShopProducts from "@/hooks/Usegetallshopproducts";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { ArrowDown } from "lucide-react";
-import { object } from "prop-types";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+
+function createserchparamhelper(filterparams) {
+  const Qparams = [];
+
+  for (const [key, value] of Object.entries(filterparams)) {
+    if (Array.isArray(value) && value.length > 0) {
+      const paramval = value.join(",");
+      Qparams.push(`${key}=${encodeURIComponent(paramval)}`);
+    }
+  }
+  return Qparams.join("&");
+}
 
 function ShoppingListing() {
   // fetch all products added by admin for sell
-  UsegetallShopProducts();
   const { shopproductlist } = useSelector((state) => state.shop);
   const [filter, setfilter] = useState({});
   const [sort, setsort] = useState(null);
+  const [searchParams, setsearchParams] = useSearchParams();
+  UsegetallShopProducts({ filterparams: filter, sortparams: sort });
+
+  useEffect(() => {
+    if (filter && Object.keys(filter).length > 0) {
+      const createQstring = createserchparamhelper(filter);
+      setsearchParams(new URLSearchParams(createQstring));
+    }
+  }, [filter, sort]);
 
   useEffect(() => {
     setsort("price-low-high");
@@ -29,8 +49,7 @@ function ShoppingListing() {
   }, []);
 
   function handlesort(val) {
-    console.log(val);
-    setfilter(val);
+    setsort(val);
   }
 
   function handlefilter(getsecid, curroption) {
@@ -96,11 +115,20 @@ function ShoppingListing() {
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  md:grid-cols-3 gap-4">
-          {shopproductlist && shopproductlist.length > 0
-            ? shopproductlist.map((item) => (
-                <ShoppingProducttile key={item} product={item} />
-              ))
-            : null}
+          {shopproductlist && shopproductlist.length > 0 ? (
+            shopproductlist.map((item) => (
+              <ShoppingProducttile key={item} product={item} />
+            ))
+          ) : (
+            <div>
+              <DotLottieReact
+                src="https://lottie.host/3c1e78d2-2de5-42ae-8cee-c521f985e185/VDQgTUr4IW.json"
+                loop
+                autoplay
+                className="w-[900px] h-full"
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
