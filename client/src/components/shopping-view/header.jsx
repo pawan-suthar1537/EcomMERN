@@ -17,6 +17,8 @@ import axios from "axios";
 import { logout } from "@/store/authslice";
 import { toast } from "sonner";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import UsercartWrapper from "./cart-Wrapper";
+import { useState } from "react";
 
 function Menuitems() {
   return (
@@ -32,6 +34,7 @@ function Menuitems() {
 
 function Headerrightcontent() {
   const { user } = useSelector((state) => state.auth);
+  const [opencartsheet, setopencartsheet] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -62,10 +65,17 @@ function Headerrightcontent() {
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
-      <Button variant="outline" size="icon">
-        <ShoppingCart className="w-6 h-6" />
-        <span className="sr-only">User cart</span>
-      </Button>
+      <Sheet open={opencartsheet} onOpenChange={() => setopencartsheet(false)}>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setopencartsheet(true)}
+        >
+          <ShoppingCart className="w-6 h-6" />
+          <span className="sr-only">User cart</span>
+        </Button>
+        <UsercartWrapper />
+      </Sheet>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-black cursor-pointer">

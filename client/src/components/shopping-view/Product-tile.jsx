@@ -1,8 +1,20 @@
+import { toast } from "sonner";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
+import axios from "axios";
+import { API_URL } from "@/config";
+import { useDispatch, useSelector } from "react-redux";
+import { setcartitem } from "@/store/cart-slice";
 
-function ShoppingProducttile({ product, handlegetproductdetailsbyid }) {
+function ShoppingProducttile({
+  product,
+  handlegetproductdetailsbyid,
+  handleaddtocart,
+}) {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   return (
     <Card className="w-full  max-w-sm mx-auto">
       <div
@@ -47,7 +59,13 @@ function ShoppingProducttile({ product, handlegetproductdetailsbyid }) {
           </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={(e) => e.stopPropagation()} className="">
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleaddtocart(product._id);
+            }}
+            className=""
+          >
             Add to Cart
           </Button>
         </CardFooter>

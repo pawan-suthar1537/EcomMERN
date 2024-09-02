@@ -52,7 +52,7 @@ const AuthLogin = () => {
       }
     } catch (error) {
       console.log("error", error);
-      toast.error("Error logging in user");
+      toast.error(error.message || "Error logging in user");
     }
   };
 

@@ -39,14 +39,14 @@ function ProductDetailsbyidDialog({ open, setopenchange, productdetails }) {
           <div className="flex items-center justify-between">
             <p
               className={`${
-                productdetails.saleprice > 0 ? "line-through" : ""
+                productdetails?.saleprice > 0 ? "line-through" : ""
               } text-3xl font-bold text-primary`}
             >
               {productdetails?.price}
             </p>
-            {productdetails.saleprice > 0 ? (
+            {productdetails?.saleprice > 0 ? (
               <p className="text-2xl font-bold text-muted-foreground">
-                {productdetails.saleprice}
+                {productdetails?.saleprice}
               </p>
             ) : null}
           </div>

@@ -10,7 +10,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { API_URL, productsortoptions } from "@/config";
+
 import UsegetallShopProducts from "@/hooks/Usegetallshopproducts";
+import { setcartitem } from "@/store/cart-slice";
 import { setshopproductdetails } from "@/store/shop-slice";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import axios from "axios";
@@ -18,6 +20,7 @@ import { ArrowDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 function createserchparamhelper(filterparams) {
   const Qparams = [];
@@ -33,15 +36,43 @@ function createserchparamhelper(filterparams) {
 
 function ShoppingListing() {
   // fetch all products added by admin for sell
+  const { user } = useSelector((state) => state.auth);
   const { shopproductlist, shopproductdetails } = useSelector(
     (state) => state.shop
   );
+  // fetch cart items of user
+
+  const { cartitems } = useSelector((state) => state.cart);
+
   const [filter, setfilter] = useState({});
   const [sort, setsort] = useState(null);
   const [searchParams, setsearchParams] = useSearchParams();
   const [opendetailsdialog, setopendetailsdialog] = useState(false);
   const dispatch = useDispatch();
   UsegetallShopProducts({ filterparams: filter, sortparams: sort });
+
+  console.log("cartitems after fetch cart of user by id ", cartitems);
+
+  async function handleaddtocart(id) {
+    try {
+      const res = await axios.post(`${API_URL}/api/shop/cart/addtocart`, {
+        userid: user._id,
+        productid: id,
+        quantity: 1,
+      });
+      console.log("while adding to cart response", res.data);
+
+      if (res.data.success) {
+        toast.success("added to cart");
+        dispatch(setcartitem(res.data.data));
+      } else {
+        toast.error("failed add to cart");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("failed add to cart");
+    }
+  }
 
   useEffect(() => {
     if (filter && Object.keys(filter).length > 0) {
@@ -65,6 +96,34 @@ function ShoppingListing() {
     setsort(val);
   }
 
+  useEffect(() => {
+    if (user?._id) {
+      const fetchCart = async () => {
+        try {
+          const res = await axios.get(
+            `${API_URL}/api/shop/cart/fetchcartitem/${user._id}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              withCredentials: true,
+            }
+          );
+          console.log(
+            "cartitems in state after fetching threw api ",
+            res.data.data
+          );
+          if (res.data.success) {
+            dispatch(setcartitem(res.data.data.items));
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      fetchCart();
+    }
+  }, [user?._id, dispatch]);
   function handlefilter(getsecid, curroption) {
     console.log(getsecid, curroption);
     let copyfilter = { ...filter };
@@ -152,6 +211,7 @@ function ShoppingListing() {
                 handlegetproductdetailsbyid={handlegetproductdetailsbyid}
                 key={item}
                 product={item}
+                handleaddtocart={handleaddtocart}
               />
             ))
           ) : (
