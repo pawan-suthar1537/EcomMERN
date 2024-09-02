@@ -12,16 +12,56 @@ import { productsortoptions } from "@/config";
 
 import UsegetallShopProducts from "@/hooks/Usegetallshopproducts";
 import { ArrowDown } from "lucide-react";
+import { object } from "prop-types";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 function ShoppingListing() {
   // fetch all products added by admin for sell
   UsegetallShopProducts();
   const { shopproductlist } = useSelector((state) => state.shop);
+  const [filter, setfilter] = useState({});
+  const [sort, setsort] = useState(null);
+
+  useEffect(() => {
+    setsort("price-low-high");
+    setfilter(JSON.parse(sessionStorage.getItem("filter")) || {});
+  }, []);
+
+  function handlesort(val) {
+    console.log(val);
+    setfilter(val);
+  }
+
+  function handlefilter(getsecid, curroption) {
+    console.log(getsecid, curroption);
+    let copyfilter = { ...filter };
+    const indexofcurrsec = Object.keys(copyfilter).findIndex(
+      (key) => key === getsecid
+    );
+    if (indexofcurrsec === -1) {
+      copyfilter = {
+        ...copyfilter,
+        [getsecid]: [curroption],
+      };
+    } else {
+      const indexofcurroption = copyfilter[getsecid].findIndex(
+        (option) => option === curroption
+      );
+      if (indexofcurroption === -1) {
+        copyfilter[getsecid].push(curroption);
+      } else {
+        copyfilter[getsecid].splice(indexofcurroption, 1);
+      }
+    }
+    console.log(copyfilter);
+    setfilter(copyfilter);
+    sessionStorage.setItem("filter", JSON.stringify(copyfilter));
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
-      <ProductFilter />
+      <ProductFilter filter={filter} handlefilter={handlefilter} />
       <div className="bg-background rounded-lg shadow-sm w-full">
         <div className="p-4 borderb-b flex  items-center justify-between">
           <h2 className="text-lg font-extrabold ">All Products</h2>
@@ -41,7 +81,7 @@ function ShoppingListing() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuRadioGroup>
+                <DropdownMenuRadioGroup value={sort} onValueChange={handlesort}>
                   {productsortoptions.map((sortitem) => (
                     <DropdownMenuRadioItem
                       key={sortitem.id}
