@@ -9,10 +9,8 @@ import { useNavigate } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
@@ -79,7 +77,7 @@ function AdminSidebar({ Open, setOpen }) {
       <aside className="hidden w-64 bg-background border-r  p-6 lg:flex  flex-col">
         <div
           onClick={() => navigate("/admin/dashboard")}
-          className="flex items-center gap-2 cursor-pointer flex"
+          className="flex items-center gap-2 cursor-pointer"
         >
           <span>
             <DotLottieReact

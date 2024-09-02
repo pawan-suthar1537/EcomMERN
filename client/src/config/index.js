@@ -134,5 +134,25 @@ export const menuitems = [
   },
 ];
 
+export const filteroptions = {
+  category: [
+    { id: "electronics", label: "Electronics" },
+    { id: "clothing", label: "Clothing" },
+    { id: "home", label: "Home" },
+  ],
+  brand: [
+    { id: "hello", label: "Nike" },
+    { id: "pooma", label: "Poona" },
+    { id: "nike", label: "Hello" },
+  ],
+};
+
+export const productsortoptions = [
+  { id: "price-low-high", label: "Price: Low to High" },
+  { id: "price-high-low", label: "Price: High to Low" },
+  { id: "name-a-z", label: "Name: A to Z" },
+  { id: "name-z-a", label: "Name: Z to A" },
+];
+
 export const API_URL =
   import.meta.env.VITE_APP_BACKEND_URL || "http://localhost:3000";
