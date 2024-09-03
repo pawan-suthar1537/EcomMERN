@@ -100,7 +100,6 @@ const editProduct = async (req, res) => {
       totalstock,
     } = req.body;
     const product = await Product.findOne({ _id: req.params.id });
-    console.log(product);
     if (!product) {
       return res.status(404).json({
         success: false,
