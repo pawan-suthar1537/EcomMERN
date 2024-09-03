@@ -75,7 +75,7 @@ function ShoppingListing() {
           }
         );
         if (updatedCartRes.data.success) {
-          dispatch(setcartitem(updatedCartRes.data.data.items));
+          dispatch(setcartitem(updatedCartRes.data.data));
         }
       } else {
         toast.error("failed add to cart");
