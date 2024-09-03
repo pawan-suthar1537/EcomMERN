@@ -18,7 +18,8 @@ import { logout } from "@/store/authslice";
 import { toast } from "sonner";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import UsercartWrapper from "./cart-Wrapper";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { setcartitem } from "@/store/cart-slice";
 
 function Menuitems() {
   return (
@@ -37,6 +38,26 @@ function Headerrightcontent() {
   const [opencartsheet, setopencartsheet] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { cartitems } = useSelector((state) => state.cart);
+
+  useEffect(() => {
+    // Fetch cart items from API or local storage
+    const fetchCartItems = async () => {
+      try {
+        // Replace this with your actual API call
+        const response = await axios.get(`${API_URL}/api/cart`, { withCredentials: true });
+        dispatch(setcartitem(response.data.items));
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    };
+
+    fetchCartItems();
+  }, [dispatch]);
+
+  console.log("cartitems in header fetch from state ",cartitems);
+
+
 
   const handlelogout = async () => {
     try {
@@ -74,7 +95,10 @@ function Headerrightcontent() {
           <ShoppingCart className="w-6 h-6" />
           <span className="sr-only">User cart</span>
         </Button>
-        <UsercartWrapper />
+        <UsercartWrapper
+          setopencartsheet={setopencartsheet}
+          cartitems={cartitems}
+        />
       </Sheet>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

@@ -64,7 +64,19 @@ function ShoppingListing() {
 
       if (res.data.success) {
         toast.success("added to cart");
-        dispatch(setcartitem(res.data.data));
+        // Yahan par hum seedha cart update kar rahe hain
+        const updatedCartRes = await axios.get(
+          `${API_URL}/api/shop/cart/fetchcartitem/${user._id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+        if (updatedCartRes.data.success) {
+          dispatch(setcartitem(updatedCartRes.data.data.items));
+        }
       } else {
         toast.error("failed add to cart");
       }
@@ -96,34 +108,32 @@ function ShoppingListing() {
     setsort(val);
   }
 
-  useEffect(() => {
-    if (user?._id) {
-      const fetchCart = async () => {
-        try {
-          const res = await axios.get(
-            `${API_URL}/api/shop/cart/fetchcartitem/${user._id}`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-              withCredentials: true,
-            }
-          );
-          console.log(
-            "cartitems in state after fetching threw api ",
-            res.data.data
-          );
-          if (res.data.success) {
-            dispatch(setcartitem(res.data.data.items));
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      };
+  // useEffect(() => {
+  //   const fetchCart = async () => {
+  //     if (!user?._id) return;
 
-      fetchCart();
-    }
-  }, [user?._id, dispatch]);
+  //     try {
+  //       const res = await axios.get(
+  //         `${API_URL}/api/shop/cart/fetchcartitem/${user._id}`,
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           withCredentials: true,
+  //         }
+  //       );
+
+  //       if (res.data.success) {
+  //         dispatch(setcartitem(res.data.data.items));
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching cart:", error);
+  //     }
+  //   };
+
+  //   fetchCart();
+  // }, [user?._id, dispatch]);
+
   function handlefilter(getsecid, curroption) {
     console.log(getsecid, curroption);
     let copyfilter = { ...filter };
