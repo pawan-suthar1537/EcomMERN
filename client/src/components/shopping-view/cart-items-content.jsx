@@ -65,7 +65,7 @@ function UsercartItemscontent({ item, userid }) {
       <img
         src={item?.image}
         alt={item?.title}
-        className="w-20 h-20 object-cover"
+        className="w-[70px] h-[70px] object-cover"
       />
       <div className="flex-1">
         <h3 className="font-extrabold">{item?.title}</h3>
