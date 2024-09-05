@@ -154,5 +154,55 @@ export const productsortoptions = [
   { id: "name-z-a", label: "Name: Z to A" },
 ];
 
+export const addressformcontrols = [
+  {
+    name: "address",
+    label: "Address",
+    type: "text",
+    placeholder: "Enter your address",
+    required: true,
+    componenttype: "input",
+  },
+  {
+    name: "city",
+    label: "City",
+    type: "text",
+    placeholder: "Enter your city",
+    required: true,
+    componenttype: "input",
+  },
+  {
+    name: "state",
+    label: "State",
+    type: "text",
+    placeholder: "Enter your state",
+    required: true,
+    componenttype: "input",
+  },
+  {
+    name: "pincode",
+    label: "Pincode",
+    type: "number",
+    placeholder: "Enter your pincode",
+    required: true,
+    componenttype: "input",
+  },
+  {
+    name: "phone",
+    label: "Phone",
+    type: "number",
+    placeholder: "Enter your phone number",
+    required: true,
+    componenttype: "input",
+  },
+  {
+    name: "additionalinfo",
+    label: "Additional Info",
+    type: "text",
+    placeholder: "Enter any additional info",
+    componenttype: "textarea",
+  },
+];
+
 export const API_URL =
   import.meta.env.VITE_APP_BACKEND_URL || "http://localhost:3000";

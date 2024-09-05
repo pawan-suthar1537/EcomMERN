@@ -14,6 +14,7 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import cartSlice from "./cart-slice";
+import addressSlice from "./address-slice";
 
 const persistConfig = {
   key: "root",
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   adminproducts: Adminproductaslice,
   shop: Shopproductslice,
   cart: cartSlice,
+  address: addressSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
