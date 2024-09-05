@@ -13,10 +13,42 @@ import { API_URL } from "@/config";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setcartitem } from "@/store/cart-slice";
+import { useEffect } from "react";
+import { setshopproductdetails } from "@/store/shop-slice";
 
-function ProductDetailsbyidDialog({ open, setopenchange, productdetails }) {
+function ProductDetailsbyidDialog({
+  open,
+  setopenchange,
+  productdetails,
+  productId,
+}) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (open && productId) {
+      // Fetch product details using productId if not already available
+      if (!productdetails || productdetails._id !== productId) {
+        fetchProductDetails(productId);
+      }
+    }
+  }, [open, productId]);
+
+  const fetchProductDetails = async (id) => {
+    try {
+      const res = await axios.get(`${API_URL}/api/shop/get/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        dispatch(setshopproductdetails(res.data.data));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   async function handletocart(id) {
     try {

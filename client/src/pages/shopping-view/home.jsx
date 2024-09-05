@@ -14,9 +14,14 @@ import ShoppingHeader from "@/components/shopping-view/header";
 import { API_URL } from "@/config";
 import { useNavigate } from "react-router-dom";
 import UsegetallShopProducts from "@/hooks/Usegetallshopproducts";
-import { useSelector } from "react-redux";
-import ShoppingProducttile from "@/components/shopping-view/Product-tile";
+import { useDispatch, useSelector } from "react-redux";
+import ShoppingProductTile from "@/components/shopping-view/Product-tile";
 import { gsap } from "gsap";
+import { setshopproductdetails } from "@/store/shop-slice";
+import { toast } from "sonner";
+import { setcartitem } from "@/store/cart-slice";
+import ProductDetailsbyidDialog from "@/components/shopping-view/product-detailsbyid";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const categories = [
   {
@@ -61,11 +66,25 @@ function Home() {
   const [sliderImages, setSliderImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAutoScrolling, setIsAutoScrolling] = useState(true);
+
+  const { shopproductlist, shopproductdetails } = useSelector(
+    (state) => state.shop
+  );
   const navigate = useNavigate();
-  const { shopproductlist } = useSelector((state) => state.shop);
+  const [opendetailsdialog, setopendetailsdialog] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth);
   console.log("shopproductlist on home page", shopproductlist);
 
   const headingsRef = useRef([]);
+
+  useEffect(() => {
+    if (shopproductdetails !== null && opendetailsdialog) {
+      setopendetailsdialog(true);
+    }
+  }, [shopproductdetails]);
 
   function handlenavigatetolistingpage(id, type) {
     sessionStorage.removeItem("filter");
@@ -74,6 +93,58 @@ function Home() {
     };
     sessionStorage.setItem("filter", JSON.stringify(currtfilter));
     navigate(`/shop/products`);
+  }
+
+  async function handlegetproductdetailsbyid(getpid) {
+    console.log("getpid for serch product details", getpid);
+    try {
+      const res = await axios.get(`${API_URL}/api/shop/get/${getpid}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        dispatch(setshopproductdetails(res.data.data));
+        setSelectedProductId(getpid);
+        setopendetailsdialog(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handleaddtocart(id) {
+    try {
+      const res = await axios.post(`${API_URL}/api/shop/cart/addtocart`, {
+        userid: user._id,
+        productid: id,
+        quantity: 1,
+      });
+      console.log("while adding to cart response", res.data);
+
+      if (res.data.success) {
+        toast.success("added to cart");
+        // Yahan par hum seedha cart update kar rahe hain
+        const updatedCartRes = await axios.get(
+          `${API_URL}/api/shop/cart/fetchcartitem/${user._id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+        if (updatedCartRes.data.success) {
+          dispatch(setcartitem(updatedCartRes.data.data));
+        }
+      } else {
+        toast.error("failed add to cart");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("failed add to cart");
+    }
   }
 
   useEffect(() => {
@@ -214,29 +285,35 @@ function Home() {
         </div>
 
         {/* Product Listings */}
-        <div className="container mx-auto my-16 px-4">
-          <h2
-            ref={(el) => (headingsRef.current[2] = el)}
-            className="text-4xl font-bold mb-8 text-gray-800 text-center lg:text-start"
-          >
-            Featured Products
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="container mx-auto p-4">
+          <h1 className="text-3xl font-bold mb-6">Home - Featured Products</h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-4">
             {shopproductlist && shopproductlist.length > 0 ? (
-              shopproductlist.map((p) => (
-                <ShoppingProducttile
-                  key={p._id}
-                  product={p}
-                  // handlegetproductdetailsbyid={handlegetproductdetailsbyid}
-                  // handleaddtocart={handleaddtocart}
+              shopproductlist.map((item) => (
+                <ShoppingProductTile
+                  key={item._id}
+                  product={item}
+                  handleaddtocart={handleaddtocart}
+                  handlegetproductdetailsbyid={handlegetproductdetailsbyid}
                 />
               ))
             ) : (
-              <div className="col-span-full text-center text-gray-600 text-lg">
-                No products found
+              <div className="flex justify-center">
+                <DotLottieReact
+                  src="https://lottie.host/3c1e78d2-2de5-42ae-8cee-c521f985e185/VDQgTUr4IW.json"
+                  loop
+                  autoplay
+                  className="w-[300px] h-[300px]"
+                />
               </div>
             )}
           </div>
+          <ProductDetailsbyidDialog
+            open={opendetailsdialog}
+            setopenchange={setopendetailsdialog}
+            productdetails={shopproductdetails}
+            productId={selectedProductId}
+          />
         </div>
       </main>
     </div>

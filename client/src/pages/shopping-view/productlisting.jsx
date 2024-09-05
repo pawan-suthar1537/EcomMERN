@@ -53,6 +53,8 @@ function ShoppingListing() {
 
   console.log("cartitems after fetch cart of user by id ", cartitems);
 
+  const [selectedProductId, setSelectedProductId] = useState(null);
+
   async function handleaddtocart(id) {
     try {
       const res = await axios.post(`${API_URL}/api/shop/cart/addtocart`, {
@@ -171,6 +173,7 @@ function ShoppingListing() {
       });
       if (res.data.success) {
         dispatch(setshopproductdetails(res.data.data));
+        setSelectedProductId(getpid);
         setopendetailsdialog(true);
       }
     } catch (error) {
@@ -240,6 +243,7 @@ function ShoppingListing() {
         open={opendetailsdialog}
         setopenchange={setopendetailsdialog}
         productdetails={shopproductdetails}
+        productId={selectedProductId}
       />
     </div>
   );
