@@ -12,6 +12,7 @@ import {
 } from "@/store/address-slice";
 import AddressCard from "./addresscard";
 import { toast } from "sonner";
+import { Badge } from "../ui/badge";
 
 const initialformdata = {
   address: "",
@@ -90,11 +91,14 @@ function Address() {
             ? "Edit Address"
             : `Your Addresses (${addresses.length}/3)`}
           {addresses.length >= 3 && (
-            <span className="text-red-500">You can only have 3 addresses.</span>
+            <Badge className="text-red-500 bg-white border-red-500 text-lg">
+              limit reached remove to add new or edit existing.
+            </Badge>
           )}
         </CardTitle>
       </CardHeader>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 p-5">
+        
         {addresses && addresses.length > 0 ? (
           addresses.map((singleAddItem) => (
             <AddressCard

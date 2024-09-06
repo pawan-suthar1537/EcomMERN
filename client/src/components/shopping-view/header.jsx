@@ -123,13 +123,16 @@ function Headerrightcontent() {
             />
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => navigate("/shop/account")}>
-            <User2Icon className="mr-2 h-4 w-4" />
+          <DropdownMenuItem
+            onClick={() => navigate("/shop/account")}
+            className="cursor-pointer"
+          >
+            <User2Icon className="mr-2 h-4 w-4 " />
             Account
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handlelogout}>
-            <LogOut className="mr-2 h-4 w-4" />
+          <DropdownMenuItem onClick={handlelogout} className="cursor-pointer">
+            <LogOut className="mr-2 h-4 w-4 " />
             Logout
           </DropdownMenuItem>
         </DropdownMenuContent>

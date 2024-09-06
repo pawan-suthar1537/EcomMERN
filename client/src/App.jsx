@@ -6,7 +6,6 @@ import AuthRegister from "./pages/auth/register";
 import AdminLayout from "./components/admin-view/Layout";
 import AdminDashboard from "./pages/admin-view/Dashboard";
 import AdminProducts from "./pages/admin-view/Products";
-import AdminOrders from "./pages/admin-view/Orders";
 
 import ShoppingLayout from "./components/shopping-view/Layout";
 import NotFound from "./pages/not-found";
@@ -18,6 +17,9 @@ import ShoppingHome from "./pages/shopping-view/home";
 import Unauthpage from "./pages/unauthpage/unauthpage";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import ShoppingOrders from "./components/shopping-view/order";
+
+import AdminOrder from "./pages/admin-view/orders";
 
 function App() {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ function App() {
             <Route path="shop/home" element={<ShoppingHome />} />
             <Route path="shop/products" element={<ShoppingListing />} />
             <Route path="shop/checkout" element={<ShoppingCheckout />} />
+            <Route path="shop/orders" element={<ShoppingOrders />} />
             <Route
               path="shop/account"
               element={
@@ -89,7 +92,7 @@ function App() {
           >
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
-            <Route path="orders" element={<AdminOrders />} />
+            <Route path="orders" element={<AdminOrder />} />
           </Route>
 
           <Route path="unauth-page" element={<Unauthpage />} />

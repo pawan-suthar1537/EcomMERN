@@ -14,7 +14,7 @@ function ShoppingCheckout() {
   );
 
   return (
-    <div className="flex flex-col  mx-auto ">
+    <div className="flex flex-col   ">
       <div className="relative h-[350px] w-full overflow-hidden rounded-lg mb-8">
         <img
           src="https://images.pexels.com/photos/1005644/pexels-photo-1005644.jpeg"
@@ -29,6 +29,7 @@ function ShoppingCheckout() {
         <h2 className="text-2xl font-semibold mb-6">Select Address</h2>
         <Address />
         <div className="flex flex-col gap-4 mt-10 ">
+          <h1 className="text-3xl font-bold mb-10">Your Cart Items</h1>
           {cartitems && cartitems.items.length > 0 ? (
             cartitems.items.map((cartitem) => (
               <UsercartItemscontent
