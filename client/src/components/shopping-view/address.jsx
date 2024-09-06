@@ -23,7 +23,7 @@ const initialformdata = {
   additionalinfo: "",
 };
 
-function Address() {
+function Address({ setcurrentselectedaddress }) {
   const [formData, setFormData] = useState(initialformdata);
   const [currentEditAddressId, setCurrentEditAddressId] = useState(null);
   const dispatch = useDispatch();
@@ -98,7 +98,6 @@ function Address() {
         </CardTitle>
       </CardHeader>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 p-5">
-        
         {addresses && addresses.length > 0 ? (
           addresses.map((singleAddItem) => (
             <AddressCard
@@ -106,6 +105,7 @@ function Address() {
               addressinfo={singleAddItem}
               handleeditaddress={handleEditAddress}
               handledeleteaddress={handleDeleteAddress}
+              setcurrentselectedaddress={setcurrentselectedaddress}
             />
           ))
         ) : (

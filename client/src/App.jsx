@@ -20,6 +20,8 @@ import { useEffect } from "react";
 import ShoppingOrders from "./components/shopping-view/order";
 
 import AdminOrder from "./pages/admin-view/orders";
+import Paypalreturn from "./pages/shopping-view/paypalreturn";
+import Paypalcancel from "./pages/shopping-view/paypalcancel";
 
 function App() {
   const navigate = useNavigate();
@@ -55,6 +57,8 @@ function App() {
                 isauth ? <ShoppingAccount /> : <Navigate to="/auth/login" />
               }
             />
+            <Route path="shop/paypalreturn" element={<Paypalreturn />} />
+            <Route path="shop/paypalcancel" element={<Paypalcancel />} />
           </Route>
 
           <Route path="/auth" element={<AuthLayout />}>

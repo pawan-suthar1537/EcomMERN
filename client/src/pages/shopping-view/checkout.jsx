@@ -1,10 +1,23 @@
 import Address from "@/components/shopping-view/address";
 import UsercartItemscontent from "@/components/shopping-view/cart-items-content";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
+import { createorder } from "@/store/order-slice";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 function ShoppingCheckout() {
   const { cartitems } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
+  const { approvedurl } = useSelector((state) => state.order);
+  const [currentselectedaddress, setcurrentselectedaddress] = useState(null);
+  const [ispaymentstart, setispaymentstart] = useState(false);
+  console.log(
+    "currentselectedaddress in checkout page=>>>>>>>>>>>>>",
+    currentselectedaddress
+  );
+  const dispatch = useDispatch();
+
   console.log("cartitems in checkout page=>>>>>>>>>>>>>", cartitems);
   const tottalprice = cartitems?.items?.reduce(
     (total, item) =>
@@ -12,6 +25,56 @@ function ShoppingCheckout() {
       (item.saleprice > 0 ? item.saleprice : item.price) * item.quantity,
     0
   );
+
+  const handleinitialpayment = () => {
+    const orderdata = {
+      userid: user?._id,
+      cartitems: cartitems?.items?.map((item) => ({
+        productid: item.productid,
+
+        title: item.title,
+        price: item.saleprice > 0 ? item.saleprice : item.price,
+        quantity: item.quantity,
+        image: item.image,
+      })),
+      addressinfo: {
+        addressid: currentselectedaddress?._id,
+        address: currentselectedaddress?.address,
+        city: currentselectedaddress?.city,
+        state: currentselectedaddress?.state,
+        pincode: currentselectedaddress?.pincode,
+        phone: currentselectedaddress?.phone,
+        additionalinfo: currentselectedaddress?.additionalinfo,
+      },
+      status: "pending",
+      paymentmethod: "paypal",
+      paymentstatus: "pending",
+      totalamount: tottalprice,
+      orderdate: new Date(),
+      orderupdatedate: new Date(),
+      paymentid: "",
+      payerid: "",
+    };
+    console.log("orderdata in checkout page=>>>>>>>>>>>>>", orderdata);
+    console.log(
+      "addressinfo in checkout page=>>>>>>>>>>>>>",
+      orderdata.addressinfo
+    );
+    dispatch(createorder(orderdata)).then((res) => {
+      console.log("res in checkout page=>>>>>>>>>>>>>", res);
+      if (res.payload.success === true) {
+        setispaymentstart(true);
+        toast.success("Order placed successfully!");
+      } else {
+        setispaymentstart(false);
+        toast.error("Failed to place the order.");
+      }
+    });
+  };
+
+  if (approvedurl) {
+    window.location.href = approvedurl;
+  }
 
   return (
     <div className="flex flex-col   ">
@@ -27,7 +90,7 @@ function ShoppingCheckout() {
       </div>
       <div className="bg-white shadow-md rounded-lg p-6">
         <h2 className="text-2xl font-semibold mb-6">Select Address</h2>
-        <Address />
+        <Address setcurrentselectedaddress={setcurrentselectedaddress} />
         <div className="flex flex-col gap-4 mt-10 ">
           <h1 className="text-3xl font-bold mb-10">Your Cart Items</h1>
           {cartitems && cartitems.items.length > 0 ? (
@@ -51,7 +114,9 @@ function ShoppingCheckout() {
           </div>
         </div>
         <div className="mt-10 w-full">
-          <Button className="w-full">Place Order</Button>
+          <Button onClick={handleinitialpayment} className="w-full">
+            Place Order
+          </Button>
         </div>
       </div>
     </div>

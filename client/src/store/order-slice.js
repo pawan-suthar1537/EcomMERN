@@ -15,8 +15,8 @@ export const createorder = (orderData) => async (dispatch) => {
     );
     console.log(response.data);
     if (response.data.success === true) {
-      toast.success(response.data.message);
       dispatch(setOrderDetails(response.data));
+      return response.data;
     }
   } catch (error) {
     console.error(error);
@@ -36,9 +36,13 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     setOrderDetails: (state, action) => {
+      console.log(
+        "action.payload in order slice=>>>>>>>>>>>>>",
+        action.payload
+      );
       state.orderid = action.payload.orderid;
       state.approvedurl = action.payload.approvedurl;
-      state.orders = action.payload.orders;
+      state.orders = action.payload.order;
     },
   },
 });

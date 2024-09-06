@@ -3,10 +3,22 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Label } from "../ui/label";
 
-function AddressCard({ addressinfo, handleeditaddress, handledeleteaddress }) {
+function AddressCard({
+  addressinfo,
+  handleeditaddress,
+  handledeleteaddress,
+  setcurrentselectedaddress,
+}) {
   console.log(addressinfo);
   return (
-    <Card className="bg-white rounded-lg shadow-md p-5 h-full flex flex-col justify-between">
+    <Card
+      onClick={() =>
+        setcurrentselectedaddress
+          ? setcurrentselectedaddress(addressinfo)
+          : null
+      }
+      className="bg-white rounded-lg shadow-md p-5 h-full flex flex-col justify-between"
+    >
       <CardContent className="grid p-4 gap-2">
         <Label className="text-sm font-semibold">
           Address: <span className="font-normal">{addressinfo?.address}</span>

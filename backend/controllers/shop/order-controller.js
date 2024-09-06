@@ -40,8 +40,8 @@ const createorder = async (req, res) => {
             })),
           },
           amount: {
-            currency: "USD",
             total: totalamount.toFixed(2),
+            currency: "USD",
           },
           description: "Order Description",
         },
@@ -75,6 +75,10 @@ const createorder = async (req, res) => {
         const approvedurl = payment.links.find(
           (link) => link.rel === "approval_url"
         ).href;
+
+        console.log("approvedurl", approvedurl);
+        console.log("order", order);
+        console.log("payment", payment);
 
         res.status(200).json({
           message: "Order created successfully",
