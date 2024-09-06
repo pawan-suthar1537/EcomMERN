@@ -2,7 +2,7 @@ import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import UsercartItemscontent from "./cart-items-content";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function UsercartWrapper({ cartitems, setopencartsheet }) {
   console.log("cartitems in UsercartWrapper ", cartitems);
@@ -12,6 +12,7 @@ function UsercartWrapper({ cartitems, setopencartsheet }) {
       (item.saleprice > 0 ? item.saleprice : item.price) * item.quantity,
     0
   );
+  const navigate = useNavigate();
   return (
     <SheetContent className="sm:max-w-md">
       <SheetHeader>
@@ -38,7 +39,15 @@ function UsercartWrapper({ cartitems, setopencartsheet }) {
               <span className="font-bold">{tottalprice}</span>
             </div>
           </div>
-          <Button className="w-full mt-8">Checkout</Button>
+          <Button
+            onClick={() => {
+              navigate("/shop/checkout");
+              setopencartsheet(false);
+            }}
+            className="w-full mt-8"
+          >
+            Checkout
+          </Button>
         </div>
       ) : (
         <>

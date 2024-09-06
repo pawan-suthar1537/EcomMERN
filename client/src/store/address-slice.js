@@ -16,7 +16,6 @@ export const fetchAddresses = (userId) => async (dispatch) => {
     dispatch(setAddress(getRes.data.data));
   } catch (error) {
     console.error(error);
-    toast.error("Failed to fetch addresses");
   }
 };
 

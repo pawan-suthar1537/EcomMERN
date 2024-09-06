@@ -11,6 +11,7 @@ import {
   deleteExistingAddress,
 } from "@/store/address-slice";
 import AddressCard from "./addresscard";
+import { toast } from "sonner";
 
 const initialformdata = {
   address: "",
@@ -44,11 +45,19 @@ function Address() {
 
   const handleAddAddress = (event) => {
     event.preventDefault();
+    // If the user already has 3 addresses, do not allow adding a new one
+    if (addresses.length >= 3) {
+      setFormData(initialformdata);
+      toast.error("You can only have 3 addresses.");
+      return;
+    }
+
     dispatch(addNewAddress(formData, user._id));
     setFormData(initialformdata);
   };
 
   const handleEditAddress = (addressInfo) => {
+    // Allow editing of existing addresses without any limit
     setCurrentEditAddressId(addressInfo._id);
     setFormData({
       address: addressInfo.address,
