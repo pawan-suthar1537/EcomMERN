@@ -13,6 +13,7 @@ const adminproductsRoutes = require("./routes/admin/products/products-routes");
 const shopRoutes = require("./routes/shop/shop-router");
 const cartRoutes = require("./routes/shop/cart-routes");
 const addressRoutes = require("./routes/shop/address-routes");
+const orderRoutes = require("./routes/shop/order-routes");
 //! middlewares
 app.use(
   cors({
@@ -42,6 +43,7 @@ app.use("/api/admin/products", adminproductsRoutes);
 app.use("/api/shop", shopRoutes);
 app.use("/api/shop/cart", cartRoutes);
 app.use("/api/shop/address", addressRoutes);
+app.use("/api/shop/order", orderRoutes);
 connect()
   .then(() => {
     app.listen(PORT, () => {
