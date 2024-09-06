@@ -85,11 +85,16 @@ function Address() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          {currentEditAddressId ? "Edit Address" : "Your Addresses"}
+        <CardTitle className="flex justify-between">
+          {currentEditAddressId
+            ? "Edit Address"
+            : `Your Addresses (${addresses.length}/3)`}
+          {addresses.length >= 3 && (
+            <span className="text-red-500">You can only have 3 addresses.</span>
+          )}
         </CardTitle>
       </CardHeader>
-      <div className="mb-5 p-3 flex flex-row gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 p-5">
         {addresses && addresses.length > 0 ? (
           addresses.map((singleAddItem) => (
             <AddressCard
@@ -103,23 +108,26 @@ function Address() {
           <div className="text-center text-gray-500">No addresses found</div>
         )}
       </div>
-      <CardHeader>
-        <CardTitle>
-          {currentEditAddressId ? "Edit Address" : "Add New Address"}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <CommonForm
-          formcontrols={addressformcontrols}
-          formdata={formData}
-          setformdata={setFormData}
-          onsubmit={
-            currentEditAddressId ? handleUpdateAddress : handleAddAddress
-          }
-          buttontext={currentEditAddressId ? "Update Address" : "Add Address"}
-          isbtndisbaled={!isFormValid()}
-        />
-      </CardContent>
+
+      {addresses && addresses.length < 3 && (
+        <>
+          <CardHeader>
+            <CardTitle>
+              {currentEditAddressId ? "Edit Address" : "Add New Address"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CommonForm
+              formcontrols={addressformcontrols}
+              formdata={formData}
+              setformdata={setFormData}
+              onsubmit={
+                currentEditAddressId ? handleUpdateAddress : handleAddAddress
+              }
+            />
+          </CardContent>
+        </>
+      )}
     </Card>
   );
 }

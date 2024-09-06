@@ -6,7 +6,7 @@ import { Label } from "../ui/label";
 function AddressCard({ addressinfo, handleeditaddress, handledeleteaddress }) {
   console.log(addressinfo);
   return (
-    <Card className="container">
+    <Card className="bg-white rounded-lg shadow-md p-5 h-full flex flex-col justify-between">
       <CardContent className="grid p-4 gap-2">
         <Label className="text-sm font-semibold">
           Address: <span className="font-normal">{addressinfo?.address}</span>
@@ -28,7 +28,7 @@ function AddressCard({ addressinfo, handleeditaddress, handledeleteaddress }) {
           <span className="font-normal">{addressinfo?.additionalinfo}</span>
         </Label>
       </CardContent>
-      <CardFooter className="flex justify-between gap-2">
+      <CardFooter className="flex justify-between mt-4 card-footer">
         <Button
           variant="outline"
           size="sm"
