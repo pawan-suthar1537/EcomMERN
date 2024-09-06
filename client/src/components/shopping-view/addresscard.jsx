@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Label } from "../ui/label";
 
 function AddressCard({ addressinfo, handleeditaddress, handledeleteaddress }) {
+  console.log(addressinfo);
   return (
     <Card className="container">
       <CardContent className="grid p-4 gap-2">

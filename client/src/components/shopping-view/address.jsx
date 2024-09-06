@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import CommonForm from "../common/form";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { addressformcontrols, API_URL } from "@/config";
+import { addressformcontrols } from "@/config";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
-import axios from "axios";
+
 import {
-  deleteAddress,
-  setAddress,
-  updateAddress,
+  fetchAddresses,
+  addNewAddress,
+  updateExistingAddress,
+  deleteExistingAddress,
 } from "@/store/address-slice";
 import AddressCard from "./addresscard";
-// import { addressformcontrols } from "@/config";
 
 const initialformdata = {
   address: "",
@@ -24,138 +23,71 @@ const initialformdata = {
 
 function Address() {
   const [formData, setFormData] = useState(initialformdata);
-  const [currenteditaddressid, setCurrenteditaddressid] = useState(null);
+  const [currentEditAddressId, setCurrentEditAddressId] = useState(null);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { addresses } = useSelector((state) => state.address);
-  console.log("addresses in state", addresses);
+
+  console.log(addresses);
 
   useEffect(() => {
-    fetchAddresses();
-  }, [user._id]);
-
-  const fetchAddresses = async () => {
-    try {
-      const getRes = await axios.get(
-        `${API_URL}/api/shop/address/get/${user._id}`,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      dispatch(setAddress(getRes.data.data));
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to fetch addresses");
+    if (user?._id) {
+      dispatch(fetchAddresses(user._id));
     }
-  };
-  const isFormvalid = () => {
+  }, [dispatch, user._id]);
+
+  const isFormValid = () => {
     return Object.keys(formData)
       .map((key) => formData[key].trim() !== "")
       .every((item) => item);
   };
 
-  const addnewaddress = async (event) => {
+  const handleAddAddress = (event) => {
     event.preventDefault();
-    try {
-      const addRes = await axios.post(
-        `${API_URL}/api/shop/address/add`,
-        {
-          ...formData,
-          userid: user._id,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-
-      if (addRes.data.success) {
-        toast.success(addRes.data.message);
-        dispatch(setAddress(addRes.data.data));
-        fetchAddresses();
-        setFormData(initialformdata);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error adding address");
-    }
+    dispatch(addNewAddress(formData, user._id));
+    setFormData(initialformdata);
   };
 
-  const handleeditaddress = (addressinfo) => {
-    setCurrenteditaddressid(addressinfo._id);
+  const handleEditAddress = (addressInfo) => {
+    setCurrentEditAddressId(addressInfo._id);
     setFormData({
-      address: addressinfo.address,
-      city: addressinfo.city,
-      state: addressinfo.state,
-      pincode: addressinfo.pincode,
-      phone: addressinfo.phone,
-      additionalinfo: addressinfo.additionalinfo,
+      address: addressInfo.address,
+      city: addressInfo.city,
+      state: addressInfo.state,
+      pincode: addressInfo.pincode,
+      phone: addressInfo.phone,
+      additionalinfo: addressInfo.additionalinfo,
     });
   };
 
-  const updateAddress = async (event) => {
+  const handleUpdateAddress = (event) => {
     event.preventDefault();
-    try {
-      const editRes = await axios.put(
-        `${API_URL}/api/shop/address/edit/${user._id}/${currenteditaddressid}`,
-        {
-          ...formData,
-          userid: user._id,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-
-      if (editRes.data.success) {
-        toast.success(editRes.data.message);
-        fetchAddresses();
-        setFormData(initialformdata);
-        setCurrenteditaddressid(null);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "An error occurred");
+    if (currentEditAddressId) {
+      dispatch(updateExistingAddress(formData, user._id, currentEditAddressId));
+      setFormData(initialformdata);
+      setCurrentEditAddressId(null);
     }
   };
 
-  const handledeleteaddress = async (addressinfo) => {
-    try {
-      const deleteRes = await axios.delete(
-        `${API_URL}/api/shop/address/delete/${user._id}/${addressinfo._id}`,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-
-      if (deleteRes.data.success) {
-        toast.success(deleteRes.data.message);
-        fetchAddresses();
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "An error occurred");
-    }
+  const handleDeleteAddress = (addressInfo) => {
+    dispatch(deleteExistingAddress(user._id, addressInfo._id));
   };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          {currenteditaddressid ? "Edit Address" : "Your Addresses"}
+          {currentEditAddressId ? "Edit Address" : "Your Addresses"}
         </CardTitle>
       </CardHeader>
       <div className="mb-5 p-3 flex flex-row gap-3">
         {addresses && addresses.length > 0 ? (
-          addresses.map((singleadditem) => (
+          addresses.map((singleAddItem) => (
             <AddressCard
-              key={singleadditem._id}
-              addressinfo={singleadditem}
-              handleeditaddress={handleeditaddress}
-              handledeleteaddress={handledeleteaddress}
+              key={singleAddItem._id}
+              addressinfo={singleAddItem}
+              handleeditaddress={handleEditAddress}
+              handledeleteaddress={handleDeleteAddress}
             />
           ))
         ) : (
@@ -163,16 +95,20 @@ function Address() {
         )}
       </div>
       <CardHeader>
-        <CardTitle>Add New Address</CardTitle>
+        <CardTitle>
+          {currentEditAddressId ? "Edit Address" : "Add New Address"}
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         <CommonForm
           formcontrols={addressformcontrols}
           formdata={formData}
           setformdata={setFormData}
-          onsubmit={currenteditaddressid ? updateAddress : addnewaddress}
-          buttontext={currenteditaddressid ? "Update Address" : "Add Address"}
-          isbtndisbaled={!isFormvalid()}
+          onsubmit={
+            currentEditAddressId ? handleUpdateAddress : handleAddAddress
+          }
+          buttontext={currentEditAddressId ? "Update Address" : "Add Address"}
+          isbtndisbaled={!isFormValid()}
         />
       </CardContent>
     </Card>
