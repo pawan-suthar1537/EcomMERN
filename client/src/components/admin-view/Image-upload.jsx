@@ -50,7 +50,7 @@ function ImageUpload({
       `${API_URL}/api/admin/products/upload-image`,
       data
     );
-    console.log("cloudinary upload image res", res);
+
     if (res?.data?.success) {
       setimageurl(res.data.result.secure_url);
       setimageloading(false);

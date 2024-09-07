@@ -17,7 +17,7 @@ const AuthRegister = () => {
   const [formdata, setformdata] = useState(initialstate);
   const { isauth, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  console.log("register formdata", formdata);
+ 
   const location = useLocation();
 
   const onsubmit = async (event) => {
@@ -29,7 +29,7 @@ const AuthRegister = () => {
         },
         withCredentials: true,
       });
-      console.log("res while register", res.data);
+  
       if (res.data.success === false) {
         toast.error(res.data.message || "Error registering user");
         throw new Error(res.data.message);

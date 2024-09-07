@@ -1,7 +1,5 @@
 const paypal = require("paypal-rest-sdk");
 
-console.log(process.env.PAYPAL_CLIENT_ID);
-console.log(process.env.PAYPAL_CLIENT_SECRET);
 paypal.configure({
   mode: "sandbox", //sandbox or live
   client_id: process.env.PAYPAL_CLIENT_ID,

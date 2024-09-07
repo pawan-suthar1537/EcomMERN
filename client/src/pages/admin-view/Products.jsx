@@ -40,15 +40,10 @@ function AdminProducts() {
   const [imgloading, setimageloading] = useState(false);
   const [currenteditpostid, setcurrenteditpostid] = useState(null);
 
-  console.log("imageurl in adminproduct to pass in api ", imageurl);
-
   const { products } = useSelector((state) => state.adminproducts);
-  console.log("all products in admin state", products);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  console.log("formdata for  product", formdata);
 
   function isFormvalid() {
     return Object.keys(formdata)
@@ -57,7 +52,6 @@ function AdminProducts() {
   }
 
   async function handledeleteproduct(productid) {
-    console.log("productid to delete", productid);
     try {
       const res = await axios.delete(
         `${API_URL}/api/admin/products/delete-product/${productid}`,
@@ -69,7 +63,6 @@ function AdminProducts() {
         }
       );
 
-      console.log("delete product res", res.data);
       if (res.data.success === true) {
         toast.success("Product deleted successfully");
         dispatch(
@@ -90,7 +83,7 @@ function AdminProducts() {
 
     try {
       let res;
-      console.log("currenteditpostid", currenteditpostid);
+
       if (currenteditpostid === null) {
         // Add new product
         res = await axios.post(
@@ -123,7 +116,6 @@ function AdminProducts() {
         );
       }
 
-      console.log("API call response: ", res.data);
       if (res.data.success) {
         toast.success(res.data.message || "Product saved successfully");
         setopencreateproductsheet(false);

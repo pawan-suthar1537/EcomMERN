@@ -12,13 +12,10 @@ function ShoppingCheckout() {
   const { approvedurl } = useSelector((state) => state.order);
   const [currentselectedaddress, setcurrentselectedaddress] = useState(null);
   const [ispaymentstart, setispaymentstart] = useState(false);
-  console.log(
-    "currentselectedaddress in checkout page=>>>>>>>>>>>>>",
-    currentselectedaddress
-  );
+  
   const dispatch = useDispatch();
 
-  console.log("cartitems in checkout page=>>>>>>>>>>>>>", cartitems);
+
   const tottalprice = cartitems?.items?.reduce(
     (total, item) =>
       total +
@@ -55,13 +52,9 @@ function ShoppingCheckout() {
       paymentid: "",
       payerid: "",
     };
-    console.log("orderdata in checkout page=>>>>>>>>>>>>>", orderdata);
-    console.log(
-      "addressinfo in checkout page=>>>>>>>>>>>>>",
-      orderdata.addressinfo
-    );
+   
     dispatch(createorder(orderdata)).then((res) => {
-      console.log("res in checkout page=>>>>>>>>>>>>>", res);
+     
       if (res.payload.success === true) {
         setispaymentstart(true);
         toast.success("Order placed successfully!");

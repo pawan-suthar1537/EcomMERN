@@ -20,7 +20,7 @@ const AuthLogin = () => {
 
   const onsubmit = async (event) => {
     event.preventDefault();
-    console.log("formdata", formdata);
+ 
 
     try {
       const res = await axios.post(`${API_URL}/api/auth/login`, formdata, {
@@ -29,7 +29,7 @@ const AuthLogin = () => {
         },
         withCredentials: true,
       });
-      console.log("res while login", res.data);
+      
 
       if (res.data.success === false) {
         toast.error("Error logging in user");
@@ -42,7 +42,7 @@ const AuthLogin = () => {
             res.data.user.role === "admin" ? "Admin" : "User"
           } logged in successfully`
       );
-      console.log("res.data.user", res.data.user);
+     
       dispatch(setUser(res.data.user));
       dispatch(setToken(res.data.token));
       if (res.data.user.role === "admin") {

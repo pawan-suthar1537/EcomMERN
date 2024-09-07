@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 import { setcartitem } from "@/store/cart-slice";
 
 function UsercartItemscontent({ item, userid }) {
-  console.log("cartitems in UsercartItemscontent=>>>>>>>> ", item, userid);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 

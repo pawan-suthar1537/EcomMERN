@@ -5,7 +5,6 @@ import UsercartItemscontent from "./cart-items-content";
 import { Link, useNavigate } from "react-router-dom";
 
 function UsercartWrapper({ cartitems, setopencartsheet }) {
-  console.log("cartitems in UsercartWrapper ", cartitems);
   const tottalprice = cartitems?.items?.reduce(
     (total, item) =>
       total +

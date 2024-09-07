@@ -9,7 +9,6 @@ function AddressCard({
   handledeleteaddress,
   setcurrentselectedaddress,
 }) {
-  console.log(addressinfo);
   return (
     <Card
       onClick={() =>

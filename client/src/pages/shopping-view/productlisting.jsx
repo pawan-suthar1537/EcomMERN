@@ -51,7 +51,7 @@ function ShoppingListing() {
   const dispatch = useDispatch();
   UsegetallShopProducts({ filterparams: filter, sortparams: sort });
 
-  console.log("cartitems after fetch cart of user by id ", cartitems);
+
 
   const [selectedProductId, setSelectedProductId] = useState(null);
 
@@ -62,7 +62,7 @@ function ShoppingListing() {
         productid: id,
         quantity: 1,
       });
-      console.log("while adding to cart response", res.data);
+      
 
       if (res.data.success) {
         toast.success("added to cart");
@@ -137,7 +137,7 @@ function ShoppingListing() {
   // }, [user?._id, dispatch]);
 
   function handlefilter(getsecid, curroption) {
-    console.log(getsecid, curroption);
+   
     let copyfilter = { ...filter };
     const indexofcurrsec = Object.keys(copyfilter).findIndex(
       (key) => key === getsecid
@@ -157,13 +157,13 @@ function ShoppingListing() {
         copyfilter[getsecid].splice(indexofcurroption, 1);
       }
     }
-    console.log(copyfilter);
+   
     setfilter(copyfilter);
     sessionStorage.setItem("filter", JSON.stringify(copyfilter));
   }
 
   async function handlegetproductdetailsbyid(getpid) {
-    console.log("getpid for serch product details", getpid);
+    
     try {
       const res = await axios.get(`${API_URL}/api/shop/get/${getpid}`, {
         headers: {

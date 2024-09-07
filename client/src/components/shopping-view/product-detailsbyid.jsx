@@ -57,7 +57,6 @@ function ProductDetailsbyidDialog({
         productid: id,
         quantity: 1,
       });
-      console.log("while adding to cart response", res.data);
 
       if (res.data.success) {
         toast.success("added to cart");

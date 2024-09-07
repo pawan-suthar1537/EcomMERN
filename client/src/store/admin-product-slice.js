@@ -8,7 +8,7 @@ const Adminproductaslice = createSlice({
   },
   reducers: {
     setproducts: (state, action) => {
-      // console.log("action.payload", action.payload);
+    
       state.products = action.payload;
     },
   },

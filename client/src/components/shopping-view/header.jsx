@@ -48,10 +48,7 @@ function Headerrightcontent() {
         const response = await axios.get(`${API_URL}/api/cart`, {
           withCredentials: true,
         });
-        console.log(
-          "cartitems in header fetch from api=>>>>>>>>>>>>>",
-          response.data
-        );
+
         dispatch(setcartitem(response.data.items));
       } catch (error) {
         console.error("Error fetching cart items:", error);
@@ -60,8 +57,6 @@ function Headerrightcontent() {
 
     fetchCartItems();
   }, [dispatch]);
-
-  console.log("cartitems in header fetch from state ", cartitems);
 
   const handlelogout = async () => {
     try {

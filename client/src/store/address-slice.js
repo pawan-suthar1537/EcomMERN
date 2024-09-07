@@ -12,7 +12,7 @@ export const fetchAddresses = (userId) => async (dispatch) => {
         withCredentials: true,
       }
     );
-    console.log(getRes.data);
+    
     dispatch(setAddress(getRes.data.data));
   } catch (error) {
     console.error(error);

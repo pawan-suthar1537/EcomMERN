@@ -76,7 +76,7 @@ function Home() {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
-  console.log("shopproductlist on home page", shopproductlist);
+  
 
   const headingsRef = useRef([]);
 
@@ -96,7 +96,7 @@ function Home() {
   }
 
   async function handlegetproductdetailsbyid(getpid) {
-    console.log("getpid for serch product details", getpid);
+    
     try {
       const res = await axios.get(`${API_URL}/api/shop/get/${getpid}`, {
         headers: {
@@ -121,7 +121,7 @@ function Home() {
         productid: id,
         quantity: 1,
       });
-      console.log("while adding to cart response", res.data);
+     
 
       if (res.data.success) {
         toast.success("added to cart");
@@ -196,7 +196,7 @@ function Home() {
 
   // Extract unique brands from shopproductlist
   const brands = [...new Set(shopproductlist.map((product) => product.brand))];
-  console.log("brands", brands);
+
 
   return (
     <div className="flex flex-col min-h-screen ">

@@ -17,7 +17,7 @@ const createorder = async (req, res) => {
       payerid,
     } = req.body;
 
-    console.log(req.body);
+    
 
     const createpaymentjson = {
       intent: "sale",
@@ -76,9 +76,7 @@ const createorder = async (req, res) => {
           (link) => link.rel === "approval_url"
         ).href;
 
-        console.log("approvedurl", approvedurl);
-        console.log("order", order);
-        console.log("payment", payment);
+        
 
         res.status(200).json({
           message: "Order created successfully",

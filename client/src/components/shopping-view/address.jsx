@@ -30,8 +30,6 @@ function Address({ setcurrentselectedaddress }) {
   const { user } = useSelector((state) => state.auth);
   const { addresses } = useSelector((state) => state.address);
 
-  console.log(addresses);
-
   useEffect(() => {
     if (user?._id) {
       dispatch(fetchAddresses(user._id));
